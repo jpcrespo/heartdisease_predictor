@@ -27,6 +27,15 @@ def decision_tree(X_train,y_train,X_test,y_test):
     prec = precision_score(y_test, y_pred)
     rec = recall_score(y_test, y_pred)
     f1 = f1_score(y_test,y_pred)
+
+    with open('output/decision_tree.txt', 'w') as f:
+        f.write("*******************************************************************\n")
+        f.write("The Scores for Decision Tree algorithm\n")
+        f.write('\nPrecission training: '+str(aucc))
+        f.write('\nAccuracy testing: '+str(acc))
+        f.write('\nPrecission testing: '+str(prec))
+        f.write('\nRecall training: '+str(rec))
+        f.write('\nf1 training: '+str(f1))
     ConfusionMatrixDisplay.from_estimator(DT, X_test, y_test)
     plt.title('Confusion Matrix\nDecision Tree',fontsize=18)
     plt.savefig('output/DT.png', dpi=300)
