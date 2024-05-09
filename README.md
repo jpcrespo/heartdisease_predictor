@@ -1,4 +1,4 @@
-To replicate this analysis follow the following steps:
+To replicate this analysis, following steps:
 
 1. Download de repository
 
