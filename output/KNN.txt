@@ -1,8 +1,8 @@
 *******************************************************************
 The Scores for Random Forest algorithm
 
-Precision training: 0.9009
-Accuracy testing: 0.7363
-Precision testing: 0.7167
-Recall training: 0.8600
-F1 training: 0.7818
+Precision training: 0.8915
+Accuracy testing: 0.8352
+Precision testing: 0.8824
+Recall training: 0.8333
+F1 training: 0.8571

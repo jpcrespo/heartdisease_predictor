@@ -1,8 +1,0 @@
-*******************************************************************
-The Scores for Decision Tree algorithm
-
-Precission training: 1.0
-Accuracy testing: 0.7802197802197802
-Precission testing: 0.7586206896551724
-Recall training: 0.88
-f1 training: 0.8148148148148148

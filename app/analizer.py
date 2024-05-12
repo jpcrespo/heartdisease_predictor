@@ -16,7 +16,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
-
+from xgboost import XGBClassifier
 
 #Using Pearson Correlation
 def P_corr(X):
@@ -40,7 +40,7 @@ def decision_tree(X_train,y_train,X_test,y_test):
     prec = precision_score(y_test, y_pred)
     rec = recall_score(y_test, y_pred)
     f1 = f1_score(y_test,y_pred)
-    with open('output/decision_tree.txt', 'w') as f:
+    with open('output/DT.txt', 'w') as f:
         f.write("*******************************************************************\n")
         f.write("The Scores for Decision Tree algorithm\n")
         f.write('\nPrecission training: '+str(aucc))
@@ -121,6 +121,30 @@ def naive_bayes(X_train, y_train, X_test, y_test):
     return acc,prec,rec,f1
 
 
+def xgboost(X_train, y_train, X_test, y_test):
+    xgb = XGBClassifier()
+    model = xgb.fit(X_train, y_train)
+    aucc = model.score(X_train, y_train)
+    y_pred = xgb.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    prec = precision_score(y_test, y_pred)
+    rec = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+    with open('output/xgboost.txt', 'w') as f:
+        f.write("*******************************************************************\n")
+        f.write("The Scores for Random Forest algorithm\n")
+        f.write(f'\nPrecision training: {aucc:.4f}')
+        f.write(f'\nAccuracy testing: {acc:.4f}')
+        f.write(f'\nPrecision testing: {prec:.4f}')
+        f.write(f'\nRecall training: {rec:.4f}')
+        f.write(f'\nF1 training: {f1:.4f}')
+    ConfusionMatrixDisplay.from_estimator(xgb, X_test, y_test)
+    plt.title('Confusion Matrix\nXGBOOST',fontsize=18)
+    plt.savefig('output/xgboost.png', dpi=300)
+    return acc,prec,rec,f1
+    
+
+
 def K_N_N(X_train, y_train, X_test, y_test):
     knn = KNeighborsClassifier(n_neighbors=3)
     model = knn.fit(X_train, y_train)
@@ -144,14 +168,22 @@ def K_N_N(X_train, y_train, X_test, y_test):
     return acc,prec,rec,f1
     
 
+
+
+
+
+
+
+
+
 def benchmarkbar():
     # Creación del DataFrame
     data = {
-        'Model': ['decision_tree', 'random_forest', 'naive_bayes', 'support_vector_machine', 'K_N_N'],
-        'Accuracy': [0.670330, 0.868132, 0.846154, 0.857143, 0.846154],
-        'Precision': [0.720930, 0.877551, 0.906977, 0.860000, 0.857143],
-        'Recall': [0.632653, 0.877551, 0.795918, 0.877551, 0.857143],
-        'F1 Score': [0.673913, 0.877551, 0.848726, 0.868687, 0.857143]
+        'Model': ['decision_tree', 'random_forest', 'naive_bayes', 'support_vector_machine', 'K_N_N','XgBoost'],
+        'Accuracy': [0.670330, 0.868132, 0.846154, 0.857143, 0.846154,0.7253],
+        'Precision': [0.720930, 0.877551, 0.906977, 0.860000, 0.857143,0.7963],
+        'Recall': [0.632653, 0.877551, 0.795918, 0.877551, 0.857143,0.7544],
+        'F1 Score': [0.673913, 0.877551, 0.848726, 0.868687, 0.857143,0.7748]
     }
 
     bench_data = pd.DataFrame(data)
@@ -185,7 +217,7 @@ def benchmark(bench_data):
 
     angles = [n/float(N) * 2 * np.pi for n in range(N)]
     angles += angles[:1] 
-    fig, ax = plt.subplots(figsize=(14, 10), subplot_kw={'polar': True})
+    fig, ax = plt.subplots(figsize=(20,15), subplot_kw={'polar': True})
     plt.xticks(angles[:-1],categories, color='b',size=18)
     ax.set_rlabel_position(270)
 
