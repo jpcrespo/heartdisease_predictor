@@ -1,0 +1,1 @@
+Best params for KNN: {'metric': 'manhattan', 'n_neighbors': 5, 'weights': 'uniform'}

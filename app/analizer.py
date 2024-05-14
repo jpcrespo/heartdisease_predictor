@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 # Metrics and validation methods
-from sklearn.model_selection import cross_validate
+from sklearn.model_selection import cross_validate, GridSearchCV
 
 # Machine Learning Methods
 from sklearn.tree import DecisionTreeClassifier 
@@ -25,6 +25,13 @@ scoring = {
     'recall': 'recall',
     'f1': 'f1'}
 
+def tune_hyperparameters(model, param_grid, X, y):
+    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=5, scoring='accuracy', n_jobs=-1)
+    grid_search.fit(X, y)
+    best_model = grid_search.best_estimator_
+    best_params = grid_search.best_params_
+    return best_model, best_params
+
 #Using Pearson Correlation
 def P_corr(X):
     plt.figure(figsize=(12,10))
@@ -35,21 +42,48 @@ def P_corr(X):
 
 def decision_tree(X,y):
     DT = DecisionTreeClassifier(max_depth = 40)
-
-    cv_results = cross_validate(DT, X, y, cv=5, scoring=scoring)
+    param_grid = {
+        'max_depth': [10, 20, 30, 40, 50],
+        'min_samples_split': [2, 5, 10],
+        'min_samples_leaf': [1, 2, 4]
+    }
+    best_model, best_params = tune_hyperparameters(DT, param_grid, X, y)
+    cv_results = cross_validate(best_model, X, y, cv=5, scoring=scoring)
+    with open('output/DecisionTree.txt', 'w') as f:
+        f.write("*******************************************************************\n")
+        f.write("Cross-validated Scores fo\n")
+        f.write(f"Best params for Decision Tree: {best_params}")
     return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
 
 def random_forest(X,y):
     RF = RandomForestClassifier(n_estimators=100, max_depth=40, random_state=42)
-    cv_results = cross_validate(RF, X, y, cv=5, scoring=scoring)
+    param_grid = {
+        'n_estimators': [100, 200, 300],
+        'max_depth': [10, 20, 30, 40],
+        'min_samples_split': [2, 5, 10],
+        'min_samples_leaf': [1, 2, 4],
+        'bootstrap': [True, False]
+    }
+    best_model, best_params = tune_hyperparameters(RF, param_grid, X, y)
+    cv_results = cross_validate(best_model, X, y, cv=5, scoring=scoring)   
+    with open('output/RandomForest.txt', 'w') as f:
+        f.write(f"Best params for Random Forest: {best_params}")
     return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
 
 
 def suppor_vector_machine(X,y):
     svc = SVC(gamma='auto')
-    cv_results = cross_validate(svc, X, y, cv=5, scoring=scoring)
+    param_grid = {
+        'C': [0.1, 1, 10, 100],
+        'gamma': [1, 0.1, 0.01, 0.001],
+        'kernel': ['linear', 'poly', 'rbf', 'sigmoid']
+    }
+    best_model, best_params = tune_hyperparameters(svc, param_grid, X, y)
+    cv_results = cross_validate(best_model, X, y, cv=5, scoring=scoring)
+    with open('output/SupporVMachine.txt', 'w') as f:
+        f.write(f"Best params for SVC: {best_params}")
     return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
 def naive_bayes(X,y):
@@ -60,7 +94,15 @@ def naive_bayes(X,y):
 
 def KNN(X,y):
     knn = KNeighborsClassifier(n_neighbors=3)
-    cv_results = cross_validate(knn, X, y, cv=5, scoring=scoring)
+    param_grid = {
+        'n_neighbors': [3, 5, 7, 9, 11],
+        'weights': ['uniform', 'distance'],
+        'metric': ['euclidean', 'manhattan', 'minkowski']
+    }
+    best_model, best_params = tune_hyperparameters(knn, param_grid, X, y)
+    cv_results = cross_validate(best_model, X, y, cv=5, scoring=scoring)
+    with open('output/KNearNeightboor.txt', 'w') as f:
+        f.write(f"Best params for KNN: {best_params}")
     return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
 
@@ -68,7 +110,18 @@ def KNN(X,y):
 
 def xgboost(X,y):
     xgb = XGBClassifier()
-    cv_results = cross_validate(xgb, X, y, cv=5, scoring=scoring)
+    param_grid = {
+        'n_estimators': [100, 200, 300],
+        'learning_rate': [0.01, 0.1, 0.2],
+        'max_depth': [3, 5, 7],
+        'subsample': [0.6, 0.8, 1.0],
+        'colsample_bytree': [0.6, 0.8, 1.0]
+    }
+    best_model, best_params = tune_hyperparameters(xgb, param_grid, X, y)
+    cv_results = cross_validate(best_model, X, y, cv=5, scoring=scoring)
+ 
+    with open('output/xgboost.txt', 'w') as f:
+        f.write(f"Best params for XGBoost: {best_params}")
     return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
 def benchmarkbar(bench_data):

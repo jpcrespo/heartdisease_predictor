@@ -1,0 +1,1 @@
+Best params for SVC: {'C': 0.1, 'gamma': 1, 'kernel': 'poly'}
