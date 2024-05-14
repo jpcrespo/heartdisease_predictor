@@ -26,6 +26,6 @@ def data_info():
     sns.countplot(data=data_hs, x='target')
     plt.title("Count of Positive/Negative Target")
     plt.xticks(ticks=[0, 1], labels=['Negative '+str(target_count[0]), 'Positive '+ str(target_count[1])])
-    plt.grid()
+    # plt.grid(off0)
     plt.savefig('output/countplot_target.png', dpi=300)
     return data_hs
