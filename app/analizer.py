@@ -37,26 +37,12 @@ def decision_tree(X,y):
     DT = DecisionTreeClassifier(max_depth = 40)
 
     cv_results = cross_validate(DT, X, y, cv=5, scoring=scoring)
-    with open('output/DecisionTree.txt', 'w') as f:
-        f.write("*******************************************************************\n")
-        f.write("Cross-validated Scores for Decision Tree algorithm\n")
-        f.write('\nAccuracy: '+str(cv_results['test_accuracy'].mean()))
-        f.write(f'\nPrecision: '+str(cv_results['test_precision'].mean()))
-        f.write(f'\nRecall: '+str(cv_results['test_recall'].mean()))
-        f.write(f'\nF1 Score: '+str(cv_results['test_f1'].mean()))
     return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
 
 def random_forest(X,y):
     RF = RandomForestClassifier(n_estimators=100, max_depth=40, random_state=42)
     cv_results = cross_validate(RF, X, y, cv=5, scoring=scoring)
-    with open('output/RandomForest.txt', 'w') as f:
-        f.write("*******************************************************************\n")
-        f.write("Cross-validated Scores for Decision Tree algorithm\n")
-        f.write('\nAccuracy: '+str(cv_results['test_accuracy'].mean()))
-        f.write(f'\nPrecision: '+str(cv_results['test_precision'].mean()))
-        f.write(f'\nRecall: '+str(cv_results['test_recall'].mean()))
-        f.write(f'\nF1 Score: '+str(cv_results['test_f1'].mean()))
     return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
 
@@ -64,38 +50,17 @@ def random_forest(X,y):
 def suppor_vector_machine(X,y):
     svc = SVC(gamma='auto')
     cv_results = cross_validate(svc, X, y, cv=5, scoring=scoring)
-    with open('output/SupporVMachine.txt', 'w') as f:
-        f.write("*******************************************************************\n")
-        f.write("Cross-validated Scores for Decision Tree algorithm\n")
-        f.write('\nAccuracy: '+str(cv_results['test_accuracy'].mean()))
-        f.write(f'\nPrecision: '+str(cv_results['test_precision'].mean()))
-        f.write(f'\nRecall: '+str(cv_results['test_recall'].mean()))
-        f.write(f'\nF1 Score: '+str(cv_results['test_f1'].mean()))
     return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
 def naive_bayes(X,y):
     nb = GaussianNB()
     cv_results = cross_validate(nb, X, y, cv=5, scoring=scoring)
-    with open('output/NaiveBayes.txt', 'w') as f:
-        f.write("*******************************************************************\n")
-        f.write("Cross-validated Scores for Decision Tree algorithm\n")
-        f.write('\nAccuracy: '+str(cv_results['test_accuracy'].mean()))
-        f.write(f'\nPrecision: '+str(cv_results['test_precision'].mean()))
-        f.write(f'\nRecall: '+str(cv_results['test_recall'].mean()))
-        f.write(f'\nF1 Score: '+str(cv_results['test_f1'].mean()))
     return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
 
 def KNN(X,y):
     knn = KNeighborsClassifier(n_neighbors=3)
     cv_results = cross_validate(knn, X, y, cv=5, scoring=scoring)
-    with open('output/KNearNeightboor.txt', 'w') as f:
-        f.write("*******************************************************************\n")
-        f.write("Cross-validated Scores for Decision Tree algorithm\n")
-        f.write('\nAccuracy: '+str(cv_results['test_accuracy'].mean()))
-        f.write(f'\nPrecision: '+str(cv_results['test_precision'].mean()))
-        f.write(f'\nRecall: '+str(cv_results['test_recall'].mean()))
-        f.write(f'\nF1 Score: '+str(cv_results['test_f1'].mean()))
     return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
 
@@ -104,13 +69,6 @@ def KNN(X,y):
 def xgboost(X,y):
     xgb = XGBClassifier()
     cv_results = cross_validate(xgb, X, y, cv=5, scoring=scoring)
-    with open('output/xgboost.txt', 'w') as f:
-        f.write("*******************************************************************\n")
-        f.write("Cross-validated Scores for Decision Tree algorithm\n")
-        f.write('\nAccuracy: '+str(cv_results['test_accuracy'].mean()))
-        f.write(f'\nPrecision: '+str(cv_results['test_precision'].mean()))
-        f.write(f'\nRecall: '+str(cv_results['test_recall'].mean()))
-        f.write(f'\nF1 Score: '+str(cv_results['test_f1'].mean()))
     return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
 def benchmarkbar(bench_data):

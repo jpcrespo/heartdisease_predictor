@@ -3,7 +3,7 @@ Benchmark Results
 *******************************************************************
 
                 Model  Accuracy  Precision   Recall  F1 Score
-        decision_tree  0.755683   0.789385 0.769697  0.773494
+        decision_tree  0.752186   0.779915 0.775758  0.773248
         random_forest  0.841530   0.848548 0.866667  0.856644
           naive_bayes  0.805082   0.815736 0.836364  0.824598
 suppor_vector_machine  0.824863   0.803362 0.903030  0.848902

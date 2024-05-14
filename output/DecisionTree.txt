@@ -1,7 +1,0 @@
-*******************************************************************
-Cross-validated Scores for Decision Tree algorithm
-
-Accuracy: 0.7556830601092897
-Precision: 0.7893854008508592
-Recall: 0.7696969696969698
-F1 Score: 0.7734943628384834
