@@ -133,19 +133,21 @@ def benchmarkbar(bench_data):
     barplot = sns.barplot(data=melted_data, x='Metric', y='Score', hue='Model', palette='tab10')
 
     # Mejoras estéticas
-    plt.title('Benchmark', fontsize=16)  # Título del gráfico
-    plt.xlabel('Metric', fontsize=14)  # Etiqueta del eje X
+    plt.title('Benchmark', fontsize=26)  # Título del gráfico
+    #plt.xlabel('Metric', fontsize=14)  # Etiqueta del eje X
     plt.ylabel('Score', fontsize=14)  # Etiqueta del eje Y
     plt.ylim(0.5, 0.95) # Ajustar los límites del eje Y para mejor enfoque
 
     # Ajustar la leyenda
-    plt.legend(title='ML Model', fontsize=12, title_fontsize='13', loc='upper left', bbox_to_anchor=(1, 1))  # Posicionamiento de la leyenda
-
+    plt.legend(title='ML Model', fontsize=15, title_fontsize='13', loc='upper left', bbox_to_anchor=(1, 1))  # Posicionamiento de la leyenda
+    plt.xticks(fontsize=23)
+    plt.yticks(fontsize=13)
+    plt.grid()
     # Ajustar el layout para evitar recortes y superposiciones
     plt.tight_layout()
 
     # Mostrar el gráfico
-    plt.savefig('output/barbench.png', dpi=300)
+    plt.savefig('output/benchmark_bar.png', dpi=300)
 
 
 def benchmark(bench_data):
@@ -155,7 +157,7 @@ def benchmark(bench_data):
     angles = [n/float(N) * 2 * np.pi for n in range(N)]
     angles += angles[:1] 
     fig, ax = plt.subplots(figsize=(20,15), subplot_kw={'polar': True})
-    plt.xticks(angles[:-1],categories, color='b',size=18)
+    plt.xticks(angles[:-1],categories, color='b',size=35)
     ax.set_rlabel_position(270)
 
     for i in range(bench_data.shape[0]):
