@@ -5,18 +5,25 @@ from ML and anothers to show results
 
 
 import seaborn as sns
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
+# Metrics and validation methods
+from sklearn.model_selection import cross_validate
+
+# Machine Learning Methods
 from sklearn.tree import DecisionTreeClassifier 
-from sklearn.metrics import accuracy_score, f1_score, \
-    recall_score,precision_score, ConfusionMatrixDisplay
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from xgboost import XGBClassifier
+
+scoring = {
+    'accuracy': 'accuracy',
+    'precision': 'precision',
+    'recall': 'recall',
+    'f1': 'f1'}
 
 #Using Pearson Correlation
 def P_corr(X):
@@ -26,168 +33,87 @@ def P_corr(X):
     plt.title("Pearson Correlation",fontsize=30)
     plt.savefig('output/Pearson_corr.png', dpi=300)
 
-def splitdata(X,y):
-    X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3)  
-    return X_train, X_test, y_train, y_test
-
-
-def decision_tree(X_train,y_train,X_test,y_test):
+def decision_tree(X,y):
     DT = DecisionTreeClassifier(max_depth = 40)
-    model = DT.fit(X_train,y_train)
-    aucc = model.score(X_train, y_train)
-    y_pred = DT.predict(X_test)
-    acc = accuracy_score(y_test,y_pred)
-    prec = precision_score(y_test, y_pred)
-    rec = recall_score(y_test, y_pred)
-    f1 = f1_score(y_test,y_pred)
-    with open('output/DT.txt', 'w') as f:
+
+    cv_results = cross_validate(DT, X, y, cv=5, scoring=scoring)
+    with open('output/DecisionTree.txt', 'w') as f:
         f.write("*******************************************************************\n")
-        f.write("The Scores for Decision Tree algorithm\n")
-        f.write('\nPrecission training: '+str(aucc))
-        f.write('\nAccuracy testing: '+str(acc))
-        f.write('\nPrecission testing: '+str(prec))
-        f.write('\nRecall training: '+str(rec))
-        f.write('\nf1 training: '+str(f1))
-    ConfusionMatrixDisplay.from_estimator(DT, X_test, y_test)
-    plt.title('Confusion Matrix\nDecision Tree',fontsize=18)
-    plt.savefig('output/DT.png', dpi=300)
-    return acc,prec,rec,f1
+        f.write("Cross-validated Scores for Decision Tree algorithm\n")
+        f.write('\nAccuracy: '+str(cv_results['test_accuracy'].mean()))
+        f.write(f'\nPrecision: '+str(cv_results['test_precision'].mean()))
+        f.write(f'\nRecall: '+str(cv_results['test_recall'].mean()))
+        f.write(f'\nF1 Score: '+str(cv_results['test_f1'].mean()))
+    return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
 
-def random_forest(X_train, y_train, X_test, y_test):
+def random_forest(X,y):
     RF = RandomForestClassifier(n_estimators=100, max_depth=40, random_state=42)
-    model = RF.fit(X_train, y_train)
-    aucc = model.score(X_train, y_train)
-    y_pred = RF.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
-    prec = precision_score(y_test, y_pred)
-    rec = recall_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred)
-    with open('output/random_forest.txt', 'w') as f:
+    cv_results = cross_validate(RF, X, y, cv=5, scoring=scoring)
+    with open('output/RandomForest.txt', 'w') as f:
         f.write("*******************************************************************\n")
-        f.write("The Scores for Random Forest algorithm\n")
-        f.write(f'\nPrecision training: {aucc:.4f}')
-        f.write(f'\nAccuracy testing: {acc:.4f}')
-        f.write(f'\nPrecision testing: {prec:.4f}')
-        f.write(f'\nRecall training: {rec:.4f}')
-        f.write(f'\nF1 training: {f1:.4f}')
-    ConfusionMatrixDisplay.from_estimator(RF, X_test, y_test)
-    plt.title('Confusion Matrix\nRandom Forest',fontsize=18)
-    plt.savefig('output/RF.png', dpi=300)
-    return acc,prec,rec,f1
+        f.write("Cross-validated Scores for Decision Tree algorithm\n")
+        f.write('\nAccuracy: '+str(cv_results['test_accuracy'].mean()))
+        f.write(f'\nPrecision: '+str(cv_results['test_precision'].mean()))
+        f.write(f'\nRecall: '+str(cv_results['test_recall'].mean()))
+        f.write(f'\nF1 Score: '+str(cv_results['test_f1'].mean()))
+    return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
-def suppor_vector_machine(X_train, y_train, X_test, y_test):
+
+
+def suppor_vector_machine(X,y):
     svc = SVC(gamma='auto')
-    model = svc.fit(X_train, y_train)
-    aucc = model.score(X_train, y_train)
-    y_pred = svc.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
-    prec = precision_score(y_test, y_pred)
-    rec = recall_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred)
-    with open('output/suppor_vector_machine.txt', 'w') as f:
+    cv_results = cross_validate(svc, X, y, cv=5, scoring=scoring)
+    with open('output/SupporVMachine.txt', 'w') as f:
         f.write("*******************************************************************\n")
-        f.write("The Scores for Random Forest algorithm\n")
-        f.write(f'\nPrecision training: {aucc:.4f}')
-        f.write(f'\nAccuracy testing: {acc:.4f}')
-        f.write(f'\nPrecision testing: {prec:.4f}')
-        f.write(f'\nRecall training: {rec:.4f}')
-        f.write(f'\nF1 training: {f1:.4f}')
-    ConfusionMatrixDisplay.from_estimator(svc, X_test, y_test)
-    plt.title('Confusion Matrix\nSupport Vector Machine',fontsize=18)
-    plt.savefig('output/SVC.png', dpi=300)
-    return acc,prec,rec,f1
+        f.write("Cross-validated Scores for Decision Tree algorithm\n")
+        f.write('\nAccuracy: '+str(cv_results['test_accuracy'].mean()))
+        f.write(f'\nPrecision: '+str(cv_results['test_precision'].mean()))
+        f.write(f'\nRecall: '+str(cv_results['test_recall'].mean()))
+        f.write(f'\nF1 Score: '+str(cv_results['test_f1'].mean()))
+    return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
-def naive_bayes(X_train, y_train, X_test, y_test):
+def naive_bayes(X,y):
     nb = GaussianNB()
-    model = nb.fit(X_train, y_train)
-    aucc = model.score(X_train, y_train)
-    y_pred = nb.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
-    prec = precision_score(y_test, y_pred)
-    rec = recall_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred)
-    with open('output/naive_bayes.txt', 'w') as f:
+    cv_results = cross_validate(nb, X, y, cv=5, scoring=scoring)
+    with open('output/NaiveBayes.txt', 'w') as f:
         f.write("*******************************************************************\n")
-        f.write("The Scores for Random Forest algorithm\n")
-        f.write(f'\nPrecision training: {aucc:.4f}')
-        f.write(f'\nAccuracy testing: {acc:.4f}')
-        f.write(f'\nPrecision testing: {prec:.4f}')
-        f.write(f'\nRecall training: {rec:.4f}')
-        f.write(f'\nF1 training: {f1:.4f}')
-    ConfusionMatrixDisplay.from_estimator(nb, X_test, y_test)
-    plt.title('Confusion Matrix\nNaive Bayes',fontsize=18)
-    plt.savefig('output/NB.png', dpi=300)
-    return acc,prec,rec,f1
+        f.write("Cross-validated Scores for Decision Tree algorithm\n")
+        f.write('\nAccuracy: '+str(cv_results['test_accuracy'].mean()))
+        f.write(f'\nPrecision: '+str(cv_results['test_precision'].mean()))
+        f.write(f'\nRecall: '+str(cv_results['test_recall'].mean()))
+        f.write(f'\nF1 Score: '+str(cv_results['test_f1'].mean()))
+    return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
 
-def xgboost(X_train, y_train, X_test, y_test):
+def KNN(X,y):
+    knn = KNeighborsClassifier(n_neighbors=3)
+    cv_results = cross_validate(knn, X, y, cv=5, scoring=scoring)
+    with open('output/KNearNeightboor.txt', 'w') as f:
+        f.write("*******************************************************************\n")
+        f.write("Cross-validated Scores for Decision Tree algorithm\n")
+        f.write('\nAccuracy: '+str(cv_results['test_accuracy'].mean()))
+        f.write(f'\nPrecision: '+str(cv_results['test_precision'].mean()))
+        f.write(f'\nRecall: '+str(cv_results['test_recall'].mean()))
+        f.write(f'\nF1 Score: '+str(cv_results['test_f1'].mean()))
+    return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
+
+
+
+
+def xgboost(X,y):
     xgb = XGBClassifier()
-    model = xgb.fit(X_train, y_train)
-    aucc = model.score(X_train, y_train)
-    y_pred = xgb.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
-    prec = precision_score(y_test, y_pred)
-    rec = recall_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred)
+    cv_results = cross_validate(xgb, X, y, cv=5, scoring=scoring)
     with open('output/xgboost.txt', 'w') as f:
         f.write("*******************************************************************\n")
-        f.write("The Scores for Random Forest algorithm\n")
-        f.write(f'\nPrecision training: {aucc:.4f}')
-        f.write(f'\nAccuracy testing: {acc:.4f}')
-        f.write(f'\nPrecision testing: {prec:.4f}')
-        f.write(f'\nRecall training: {rec:.4f}')
-        f.write(f'\nF1 training: {f1:.4f}')
-    ConfusionMatrixDisplay.from_estimator(xgb, X_test, y_test)
-    plt.title('Confusion Matrix\nXGBOOST',fontsize=18)
-    plt.savefig('output/xgboost.png', dpi=300)
-    return acc,prec,rec,f1
-    
+        f.write("Cross-validated Scores for Decision Tree algorithm\n")
+        f.write('\nAccuracy: '+str(cv_results['test_accuracy'].mean()))
+        f.write(f'\nPrecision: '+str(cv_results['test_precision'].mean()))
+        f.write(f'\nRecall: '+str(cv_results['test_recall'].mean()))
+        f.write(f'\nF1 Score: '+str(cv_results['test_f1'].mean()))
+    return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
-
-def K_N_N(X_train, y_train, X_test, y_test):
-    knn = KNeighborsClassifier(n_neighbors=3)
-    model = knn.fit(X_train, y_train)
-    aucc = model.score(X_train, y_train)
-    y_pred = knn.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
-    prec = precision_score(y_test, y_pred)
-    rec = recall_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred)
-    with open('output/KNN.txt', 'w') as f:
-        f.write("*******************************************************************\n")
-        f.write("The Scores for Random Forest algorithm\n")
-        f.write(f'\nPrecision training: {aucc:.4f}')
-        f.write(f'\nAccuracy testing: {acc:.4f}')
-        f.write(f'\nPrecision testing: {prec:.4f}')
-        f.write(f'\nRecall training: {rec:.4f}')
-        f.write(f'\nF1 training: {f1:.4f}')
-    ConfusionMatrixDisplay.from_estimator(knn, X_test, y_test)
-    plt.title('Confusion Matrix\nKNN',fontsize=18)
-    plt.savefig('output/knn.png', dpi=300)
-    return acc,prec,rec,f1
-    
-
-
-
-
-
-
-
-
-
-def benchmarkbar():
-    # Creación del DataFrame
-    data = {
-        'Model': ['decision_tree', 'random_forest', 'naive_bayes', 'support_vector_machine', 'K_N_N','XgBoost'],
-        'Accuracy': [0.670330, 0.868132, 0.846154, 0.857143, 0.846154,0.7253],
-        'Precision': [0.720930, 0.877551, 0.906977, 0.860000, 0.857143,0.7963],
-        'Recall': [0.632653, 0.877551, 0.795918, 0.877551, 0.857143,0.7544],
-        'F1 Score': [0.673913, 0.877551, 0.848726, 0.868687, 0.857143,0.7748]
-    }
-
-    bench_data = pd.DataFrame(data)
-
+def benchmarkbar(bench_data):
     # Transformar los datos para que se ajusten al formato adecuado para seaborn
     melted_data = bench_data.melt(id_vars='Model', var_name='Metric', value_name='Score')
 
@@ -199,7 +125,7 @@ def benchmarkbar():
     plt.title('Benchmark', fontsize=16)  # Título del gráfico
     plt.xlabel('Metric', fontsize=14)  # Etiqueta del eje X
     plt.ylabel('Score', fontsize=14)  # Etiqueta del eje Y
-    plt.ylim(0.6, 0.9)  # Ajustar los límites del eje Y para mejor enfoque
+    plt.ylim(0.5, 1)  # Ajustar los límites del eje Y para mejor enfoque
 
     # Ajustar la leyenda
     plt.legend(title='ML Model', fontsize=12, title_fontsize='13', loc='upper left', bbox_to_anchor=(1, 1))  # Posicionamiento de la leyenda
@@ -236,3 +162,8 @@ def benchmark(bench_data):
     plt.tight_layout()
     plt.legend(loc='upper right', bbox_to_anchor=(0.15, 0.15),fontsize=16)
     plt.savefig('output/bench.png', dpi=300)
+    with open('output/benchmark_results.txt', 'w') as f:
+        f.write("*******************************************************************\n")
+        f.write("Benchmark Results\n")
+        f.write("*******************************************************************\n\n")
+        f.write(bench_data.to_string(index=False))
