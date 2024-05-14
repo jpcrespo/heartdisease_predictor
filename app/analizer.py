@@ -141,8 +141,9 @@ def benchmarkbar(bench_data):
     # Ajustar la leyenda
     plt.legend(title='ML Model', fontsize=15, title_fontsize='13', loc='upper left', bbox_to_anchor=(1, 1))  # Posicionamiento de la leyenda
     plt.xticks(fontsize=23)
-    plt.yticks(fontsize=13)
-    plt.grid()
+    plt.grid(axis='y', which='both', linestyle='--')
+    plt.yticks([0.75, 0.8, 0.85, 0.9, 0.95], fontsize=12)
+    
     # Ajustar el layout para evitar recortes y superposiciones
     plt.tight_layout()
 
@@ -156,10 +157,10 @@ def benchmark(bench_data):
 
     angles = [n/float(N) * 2 * np.pi for n in range(N)]
     angles += angles[:1] 
-    fig, ax = plt.subplots(figsize=(20,15), subplot_kw={'polar': True})
+    fig, ax = plt.subplots(figsize=(25,18), subplot_kw={'polar': True})
     plt.xticks(angles[:-1],categories, color='b',size=35)
     ax.set_rlabel_position(270)
-
+    plt.title("\nML methods Benchmark\n",size=50)
     for i in range(bench_data.shape[0]):
         values = bench_data.loc[i].drop('Model').values.flatten().tolist()
         values += values[:1]  # Se completa el círculo
@@ -170,10 +171,13 @@ def benchmark(bench_data):
         if label.get_text() == 'Accuracy' or label.get_text() == 'Recall' :
             label.set_horizontalalignment('left' if angle < np.pi else 'right')
             label.set_verticalalignment('bottom' if angle < np.pi/2 or angle > 3*np.pi/2 else 'top')
+    legend = plt.legend(loc='upper right', bbox_to_anchor=(0.25, 0.25), fontsize=30)
 
+    for line in legend.get_lines():
+        line.set_linewidth(4.0) 
     ax.set_yticklabels([])
     plt.tight_layout()
-    plt.legend(loc='upper right', bbox_to_anchor=(0.15, 0.15),fontsize=16)
+
     plt.savefig('output/bench.png', dpi=300)
     with open('output/benchmark_results.txt', 'w') as f:
         f.write("*******************************************************************\n")
