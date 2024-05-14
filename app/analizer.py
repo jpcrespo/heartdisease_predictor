@@ -130,13 +130,13 @@ def benchmarkbar(bench_data):
 
     # Crear un gráfico de barras
     plt.figure(figsize=(12, 8))  # Ajustar el tamaño para mejor visualización
-    barplot = sns.barplot(data=melted_data, x='Metric', y='Score', hue='Model', palette='plasma')
+    barplot = sns.barplot(data=melted_data, x='Metric', y='Score', hue='Model', palette='tab10')
 
     # Mejoras estéticas
     plt.title('Benchmark', fontsize=16)  # Título del gráfico
     plt.xlabel('Metric', fontsize=14)  # Etiqueta del eje X
     plt.ylabel('Score', fontsize=14)  # Etiqueta del eje Y
-    plt.ylim(0.5, 1)  # Ajustar los límites del eje Y para mejor enfoque
+    plt.ylim(0.5, 0.95) # Ajustar los límites del eje Y para mejor enfoque
 
     # Ajustar la leyenda
     plt.legend(title='ML Model', fontsize=12, title_fontsize='13', loc='upper left', bbox_to_anchor=(1, 1))  # Posicionamiento de la leyenda
@@ -161,8 +161,8 @@ def benchmark(bench_data):
     for i in range(bench_data.shape[0]):
         values = bench_data.loc[i].drop('Model').values.flatten().tolist()
         values += values[:1]  # Se completa el círculo
-        ax.plot(angles,np.log(values), linewidth=2, linestyle='--', label=bench_data['Model'][i])
-        ax.fill(angles,np.log(values), alpha=0.05)
+        ax.plot(angles,np.log(values), linewidth=2.5, linestyle='-', label=bench_data['Model'][i])
+        ax.fill(angles,np.log(values), alpha=0.085)
 
     for label, angle in zip(ax.get_xticklabels(), angles):
         if label.get_text() == 'Accuracy' or label.get_text() == 'Recall' :
