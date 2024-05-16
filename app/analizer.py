@@ -9,15 +9,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 # Metrics and validation methods
-from sklearn.model_selection import cross_validate, GridSearchCV
+from sklearn.model_selection import cross_validate,\
+     GridSearchCV, train_test_split, RandomizedSearchCV,\
+     cross_val_score, StratifiedKFold
 
 # Machine Learning Methods
 from sklearn.tree import DecisionTreeClassifier 
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier,StackingClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from xgboost import XGBClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
 
 scoring = {
     'accuracy': 'accuracy',
@@ -138,7 +143,7 @@ def benchmarkbar(bench_data):
     #plt.xlabel('Metric', fontsize=14)  # Etiqueta del eje X
     plt.ylabel('Score', fontsize=14)  # Etiqueta del eje Y
     plt.xlabel('Metric', fontsize=14)  # Etiqueta del eje Y
-    plt.ylim(0.5, 0.95) # Ajustar los límites del eje Y para mejor enfoque
+    plt.ylim(0.5, 0.99) # Ajustar los límites del eje Y para mejor enfoque
 
     # Ajustar la leyenda
     plt.legend(title='ML Model', fontsize=15, title_fontsize='13', loc='upper left', bbox_to_anchor=(1, 1))  # Posicionamiento de la leyenda
@@ -186,3 +191,50 @@ def benchmark(bench_data):
         f.write("Benchmark Results\n")
         f.write("*******************************************************************\n\n")
         f.write(bench_data.to_string(index=False))
+
+
+def stackmodel(X,y):
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+
+    # Definir los modelos base con los mejores hiperparámetros encontrados
+    estimators = [
+        ('decision_tree', DecisionTreeClassifier(max_depth=30, min_samples_split=2, min_samples_leaf=2)),
+        ('random_forest', RandomForestClassifier(n_estimators=100, max_depth=20, min_samples_split=2, min_samples_leaf=1, bootstrap=True, random_state=42, n_jobs=-1)),
+        ('naive_bayes', GaussianNB()),
+        ('svc', SVC(C=0.1, gamma=1, kernel='poly', probability=True)),
+        ('knn', KNeighborsClassifier(n_neighbors=5, weights='uniform', metric='manhattan', n_jobs=-1)),
+        ('xgboost', XGBClassifier(n_estimators=200, learning_rate=0.01, max_depth=3, subsample=0.6, colsample_bytree=0.6, n_jobs=-1))
+    ]
+
+    # Ajuste de hiperparámetros para el modelo meta RandomForestClassifier
+    param_grid = {
+        'n_estimators': [50, 100, 200,500],
+        'max_depth': [None, 10, 20, 30,40],
+        'min_samples_split': [2, 5, 10,20],
+        'min_samples_leaf': [1, 2, 4,6],
+        'bootstrap': [True, False]
+    }
+
+    meta_model = RandomForestClassifier(random_state=42)
+
+    # Ajuste de hiperparámetros
+    grid_search = RandomizedSearchCV(estimator=meta_model, param_distributions=param_grid, cv=5, n_jobs=-1, scoring='accuracy', random_state=42)
+    grid_search.fit(X_train, y_train)
+
+    # Mejor modelo meta
+    best_meta_model = grid_search.best_estimator_
+
+    # Crear el modelo de stacking
+    stacking_model = StackingClassifier(estimators=estimators, final_estimator=best_meta_model, n_jobs=-1)
+
+    # Entrenar el modelo de stacking usando todos los datos de entrenamiento
+    stacking_model.fit(X_train, y_train)
+
+    # Evaluar el rendimiento del modelo de stacking en el conjunto de validación
+    y_pred = stacking_model.predict(X_val)
+    accuracy = accuracy_score(y_val, y_pred)
+    precision = precision_score(y_val, y_pred)
+    recall = recall_score(y_val, y_pred)
+    f1 = f1_score(y_val, y_pred)
+
+    return accuracy,precision,recall,f1

@@ -3,14 +3,16 @@ from app.data import data_info
 from app.data_prepross import preprocess
 from app.analizer import P_corr, decision_tree, \
       random_forest, suppor_vector_machine,\
-      naive_bayes, KNN, xgboost, benchmark,benchmarkbar
+      naive_bayes, KNN, xgboost, benchmark,benchmarkbar,\
+      stackmodel
+
 
 dataset = data_info()
 X,y = preprocess(dataset)
 P_corr(X)
 
-models = [decision_tree,random_forest,naive_bayes,suppor_vector_machine,KNN,xgboost]
-name_models = ["decision_tree","random_forest","naive_bayes","suppor_vector_machine","KNN","XGboost"]
+models = [decision_tree,random_forest,naive_bayes,suppor_vector_machine,KNN,xgboost,stackmodel]
+name_models = ["decision_tree","random_forest","naive_bayes","suppor_vector_machine","KNN","XGboost","Hybrid Model"]
 
 
 
