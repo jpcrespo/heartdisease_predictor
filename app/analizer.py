@@ -124,6 +124,7 @@ def xgboost(X,y):
         f.write(f"Best params for XGBoost: {best_params}")
     return cv_results['test_accuracy'].mean(),cv_results['test_precision'].mean(),cv_results['test_recall'].mean(),cv_results['test_f1'].mean()
 
+
 def benchmarkbar(bench_data):
     # Transformar los datos para que se ajusten al formato adecuado para seaborn
     melted_data = bench_data.melt(id_vars='Model', var_name='Metric', value_name='Score')
@@ -133,14 +134,15 @@ def benchmarkbar(bench_data):
     barplot = sns.barplot(data=melted_data, x='Metric', y='Score', hue='Model', palette='tab10')
 
     # Mejoras estéticas
-    plt.title('Benchmark', fontsize=26)  # Título del gráfico
+    plt.title('\nBenchmark\n', fontsize=26)  # Título del gráfico
     #plt.xlabel('Metric', fontsize=14)  # Etiqueta del eje X
     plt.ylabel('Score', fontsize=14)  # Etiqueta del eje Y
+    plt.xlabel('Metric', fontsize=14)  # Etiqueta del eje Y
     plt.ylim(0.5, 0.95) # Ajustar los límites del eje Y para mejor enfoque
 
     # Ajustar la leyenda
     plt.legend(title='ML Model', fontsize=15, title_fontsize='13', loc='upper left', bbox_to_anchor=(1, 1))  # Posicionamiento de la leyenda
-    plt.xticks(fontsize=23)
+    plt.xticks(fontsize=20)
     plt.grid(axis='y', which='both', linestyle='--')
     plt.yticks([0.75, 0.8, 0.85, 0.9, 0.95], fontsize=12)
     
